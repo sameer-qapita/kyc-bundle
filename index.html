@@ -11,13 +11,6 @@
         .then((response) => response.json())
         .then((data) => {
           window.configData = data.baseURL;
-
-          // Load bundle.js after configData is set
-          // const script = document.createElement("script");
-          // script.src =
-          //   "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/index-79622ce1.js";
-          // script.defer = true;
-          // document.body.appendChild(script);
         })
         .catch((error) => console.error("Error fetching config:", error));
     </script>
@@ -35,26 +28,16 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/default-company-logo-1b81470e.svg"
     />
-
-    <!-- <script defer>
-      fetch(
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/config.json"
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          window.configData = data;
-        })
-        .catch((error) => console.error("Error fetching config:", error));
-    </script> -->
-
-    <!-- <script
-      src="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/index-0bce808b.js"
-      defer="defer"
-    ></script> -->
   </head>
   <body>
-    <h1>Test</h1>
     <div id="root"></div>
-    <div id="root"></div>
+    <!-- <div style="height: 100vh; width: 100vw">
+      <iframe
+        src="https://marketplacedemo.qapita.com/"
+        frameborder="0"
+        height="100%"
+        width="100%"
+      ></iframe>
+    </div> -->
   </body>
 </html>
