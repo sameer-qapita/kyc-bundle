@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkqap_match_open_client_web=self.webpackChunkqap_match_open_client_web||[]).push([[166],{62796:(e,n,t)=>{t.r(n),t.d(n,{default:()=>l});var c=t(2784),r=t(66624),a=t(38509);const l=function(){var e=(0,a.qr)((function(e){return{client:e.orgEventClient}})).client;return c.createElement(r.pY,{client:e})}}}]);
