@@ -4,7 +4,80 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script>
+   <style>
+  
+white-gradient {
+	background: linear-gradient(to right,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+  /* background: linear-gradient(to right, #633ea5 0%, rgba(99, 62, 165, 0) 100%); */
+
+}
+
+@keyframes scroll {
+	0% { transform: translateX(0); }
+	100% { transform: translateX(calc(-250px * 7)); }
+}
+
+.custom-slider {
+	background: white;
+	box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
+	height: 100px;
+	margin: auto;
+	overflow: hidden;
+	position: relative;
+	width: calc(100vw - 25px);
+}
+
+.custom-slider::before,
+.custom-slider::after {
+	background: linear-gradient(to right,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	content: "";
+	height: 100px;
+	position: absolute;
+	width: 200px;
+	z-index: 2;
+}
+
+.custom-slider::after {
+  width:40px;
+	right: 0;
+	top: 0;
+	transform: rotateZ(180deg);
+}
+
+.custom-slider::before {
+  width:40px;
+	left: 0;
+	top: 0;
+}
+
+.custom-slide-track {
+	animation: scroll 40s linear infinite;
+	display: flex;
+	width: calc(250px * 14);
+}
+
+.slide {
+  display: flex;
+  flex-direction: column;
+    align-items: center;
+	height: 100px;
+	width: 250px;
+}
+.slide img{
+  height: calc(100% - 50px);
+  border-radius: 7px;
+  aspect-ratio: 1;
+}
+
+.slide:hover {
+    background: #f0e9e9; 
+    cursor: pointer; 
+}
+
+   </style>
+  
+  
+    <!-- <script>
       fetch(
         "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/localconfig.json"
       )
@@ -27,10 +100,145 @@
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/default-company-logo-1b81470e.svg"
-    />
-  </head>
+    /> -->
+
+
+
+    <script defer>
+      fetch('https://open-marketplacedev.qapita.dev/api/v1/d/listings')
+        .then(response => response.json())
+        .then(publicData => {
+          console.log(publicData,'public Data')
+          const carouselElement = document.querySelector('.custom-slide-track');
+    
+          const carouselContent = publicData.data.map(company => `
+            <div class="slide">
+              <a href="https://open-marketplacedev.qapita.dev/d/listings/${company.id}/view">
+
+              <p>${company.name}</p>
+              </a>
+              <img src="" alt="${company.name} Logo" >
+            </div>
+          `).join('');
+    
+          carouselElement.innerHTML = carouselContent;
+    
+          publicData.data.forEach((company, index) => {
+           const organizationId = company.organizationId;
+            const slideElement = carouselElement.querySelectorAll('.slide')[index].querySelector('img');
+
+                  fetch(`https://open-marketplacedev.qapita.dev/api/v1/d/organizations/${organizationId}/logo`)
+                      .then(response => response.text())
+                      .then(srcPath => {
+                          slideElement.src = srcPath;
+                      })
+                      .catch(error => console.error('Error fetching logo:', error));
+              });
+
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+ 
+    
+    </script>
+
+
+    
+    <script defer>
+      fetch('https://open-marketplacedev.qapita.dev/api/v1/d/organizations/64b77764bb7b87e5bcd6b425/logo')
+      .then(response => response.text())
+      .then(srcPath => {
+        const img = document.createElement('img');
+        img.src = srcPath;
+        
+        const slideElement = document.querySelector('.slide');
+        slideElement.appendChild(img); 
+      });
+    </script>
+    
+
+<script>
+  fetch("https://open-marketplace.qapitacorp.com/api/v1/d/listings")
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.log("must be cors error",error))
+</script>
+
+    <!-- open market bundle scripts -->
+    <!-- <script>
+      fetch(
+        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/openmarketconfig.json"
+      )
+        .then((response) => response.json())
+        // .then((data) => {
+        //   window.configData = data.baseURL;
+        // })
+        .catch((error) => console.log("error fetching omp config", error));
+    </script> -->
+
+<!-- <script>
+  fetch("https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/openmarketconfig.json")
+    .then((response) => response.json())
+    .then((data) => {
+      // Once the config data is retrieved, you can dynamically create and append script elements
+      const scriptUrls = [
+        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/main.d00bdca8.js",
+        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/867.74a39af1.js",
+        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/antd_react.f9f708c5.js",
+        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/syncfusion.58ecef31.js",
+        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/runtime.597b000d.js"
+      ];
+
+      scriptUrls.forEach((url) => {
+        const scriptElement = document.createElement("script");
+        scriptElement.src = url;
+        scriptElement.defer = true;
+        document.head.appendChild(scriptElement);
+      });
+    })
+    .catch((error) => console.log("error fetching omp config", error));
+</script> -->
+
+   <!-- <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/main.ebea8981.css"
+  />
+  <link
+  rel="stylesheet"
+  href="https://raw.githubusercontent.com/sameer-qapita/kyc-bundle/master/open-market/syncfusion.f642b122.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/antd_react.08703cb9.css"
+/>
+<link
+rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/867.b6a56e30.css"
+  /> -->
   <body>
-    <div id="root"></div>
+    <div id="root" style="height: 600px; overflow: hidden"></div>
+    <div class="custom-slider">
+      <div class="custom-slide-track"></div>
+    </div>
+    <script>
+       document.querySelectorAll('.custom-slide-track').forEach(slide => {
+    console.log(slide,'slide node')
+    slide.addEventListener('mouseenter', () => {
+      slide.style.animationPlayState = 'paused';
+      console.log('paused');
+    });
+
+    slide.addEventListener('mouseleave', () => {
+      slide.style.animationPlayState = 'running';
+      console.log('running');
+
+    });
+  });
+    </script>
+    <div>This will be the marketplace container</div>
+    <div class="slide">
+      <p>Dyson</p>
+    </div>
     <!-- <div style="height: 100vh; width: 100vw">
       <iframe
         src="https://marketplacedemo.qapita.com/"
@@ -39,5 +247,8 @@
         width="100%"
       ></iframe>
     </div> -->
+
+
+</head>
   </body>
 </html>
