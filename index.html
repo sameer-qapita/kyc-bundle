@@ -4,251 +4,250 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-   <style>
-  
-white-gradient {
-	background: linear-gradient(to right,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
-  /* background: linear-gradient(to right, #633ea5 0%, rgba(99, 62, 165, 0) 100%); */
+    <style>
+      white-gradient {
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 1) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        /* background: linear-gradient(to right, #633ea5 0%, rgba(99, 62, 165, 0) 100%); */
+      }
 
-}
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
 
-@keyframes scroll {
-	0% { transform: translateX(0); }
-	100% { transform: translateX(calc(-250px * 7)); }
-}
+      .custom-slider {
+        background: white;
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.125);
+        display: flex;
+        height: 165px;
+        margin: auto;
+        overflow: hidden;
+        position: relative;
+        width: calc(100vw - 25px);
+      }
 
-.custom-slider {
-	background: white;
-	box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .125);
-	height: 100px;
-	margin: auto;
-	overflow: hidden;
-	position: relative;
-	width: calc(100vw - 25px);
-}
+      .custom-slider::before,
+      .custom-slider::after {
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 1) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        content: "";
+        height: 100px;
+        position: absolute;
+        width: 200px;
+        z-index: 2;
+      }
 
-.custom-slider::before,
-.custom-slider::after {
-	background: linear-gradient(to right,  rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
-	content: "";
-	height: 100px;
-	position: absolute;
-	width: 200px;
-	z-index: 2;
-}
+      .custom-slider::after {
+        width: 50px;
+        height: 150px;
+        right: 0;
+        top: 0;
+        transform: rotateZ(180deg);
+      }
 
-.custom-slider::after {
-  width:40px;
-	right: 0;
-	top: 0;
-	transform: rotateZ(180deg);
-}
+      .custom-slider::before {
+        width: 50px;
+        height: 150px;
+        left: 0;
+        top: 0;
+      }
 
-.custom-slider::before {
-  width:40px;
-	left: 0;
-	top: 0;
-}
+      .custom-slide-track,
+      .custom-slide-track-two {
+        animation: scroll 20s linear infinite;
+        display: flex;
+        width: calc(200px * 13);
+      }
 
-.custom-slide-track {
-	animation: scroll 40s linear infinite;
-	display: flex;
-	width: calc(250px * 14);
-}
+      .slide {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #d3d3d3;
+        min-width: 200px;
+        align-items: center;
+        width: 100%;
+      }
 
-.slide {
-  display: flex;
-  flex-direction: column;
-    align-items: center;
-	height: 100px;
-	width: 250px;
-}
-.slide img{
-  height: calc(100% - 50px);
-  border-radius: 7px;
-  aspect-ratio: 1;
-}
+      .slide a {
+        text-align: center;
+        font-style: normal;
+        text-decoration: none;
+        color: inherit;
+        height: -webkit-fill-available;
+      }
+      .slide a img {
+        height: 60%;
+        padding-bottom: 10px;
+      }
+      .slide a p {
+        height: 20%;
+      }
+      .slide img {
+        height: calc(100% - 90px);
+        border-radius: 7px;
+        aspect-ratio: 1;
+        object-fit: contain;
+      }
 
-.slide:hover {
-    background: #f0e9e9; 
-    cursor: pointer; 
-}
-
-   </style>
-  
-  
-    <!-- <script>
-      fetch(
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/localconfig.json"
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          window.configData = data.baseURL;
-        })
-        .catch((error) => console.error("Error fetching config:", error));
-    </script>
-    <script
-      src="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/index-79622ce1.js"
-      defer
-    ></script>
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/index-dc2cc9b5.css"
-    />
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/default-company-logo-1b81470e.svg"
-    /> -->
-
-
+      .slide:hover {
+        background: rgb(234, 225, 249, 0.3);
+        cursor: pointer;
+      }
+    </style>
 
     <script defer>
-      fetch('https://open-marketplacedev.qapita.dev/api/v1/d/listings')
-        .then(response => response.json())
-        .then(publicData => {
-          console.log(publicData,'public Data')
-          const carouselElement = document.querySelector('.custom-slide-track');
-    
-          const carouselContent = publicData.data.map(company => `
+      const listingsEndpoint =
+        "https://open-marketplacetest.qapita.dev/api/v1/d/listings";
+      fetch(listingsEndpoint)
+        .then((response) => response.json())
+        .then((publicData) => {
+          const carouselElement = document.querySelector(".custom-slide-track");
+
+          const carouselContent = publicData.data
+            .map(
+              (company) => `
             <div class="slide">
-              <a href="https://open-marketplacedev.qapita.dev/d/listings/${company.id}/view">
-
-              <p>${company.name}</p>
+             <a href="/outreach/d/listings/${company.id}/view">
               </a>
-              <img src="" alt="${company.name} Logo" >
-            </div>
-          `).join('');
-    
+              </div>
+              `
+            )
+            .join("");
+          // <p><b>${company.name}</b></p>
+
           carouselElement.innerHTML = carouselContent;
-    
+
           publicData.data.forEach((company, index) => {
-           const organizationId = company.organizationId;
-            const slideElement = carouselElement.querySelectorAll('.slide')[index].querySelector('img');
+            const organizationId = company.organizationId;
+            const slideElement = carouselElement
+              .querySelectorAll(".slide")
+              [index].querySelector("img");
 
-                  fetch(`https://open-marketplacedev.qapita.dev/api/v1/d/organizations/${organizationId}/logo`)
-                      .then(response => response.text())
-                      .then(srcPath => {
-                          slideElement.src = srcPath;
-                      })
-                      .catch(error => console.error('Error fetching logo:', error));
+            fetch(
+              `https://open-marketplacetest.qapita.dev/api/v1/d/organizations/${organizationId}/logo`
+            )
+              .then((response) => {
+                if (response.status === 200) {
+                  return response.text();
+                } else {
+                  return "https://uploads-ssl.webflow.com/633e5454c8dec0fa090556c5/651f04affb63f9233626f84c_no-logo.png";
+                }
+              })
+              .then((srcPath) => {
+                const img = document.createElement("img");
+                img.src = srcPath;
+                const slideElement = document
+                  .querySelectorAll(".custom-slide-track .slide")
+                  [index].querySelector("a");
+                slideElement.appendChild(img);
+                const pElement = document.createElement("p");
+                const brandName = document.createElement("b");
+                brandName.textContent = `${company.name}`;
+                pElement.appendChild(brandName);
+                slideElement.appendChild(pElement);
+              })
+              .catch((error) => {
+                console.log("failed to fetch logo", error);
               });
-
+          });
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch((error) => console.error("Error fetching data:", error));
 
- 
-    
-    </script>
+      // 2nd part of the slide
 
-
-    
-    <script defer>
-      fetch('https://open-marketplacedev.qapita.dev/api/v1/d/organizations/64b77764bb7b87e5bcd6b425/logo')
-      .then(response => response.text())
-      .then(srcPath => {
-        const img = document.createElement('img');
-        img.src = srcPath;
-        
-        const slideElement = document.querySelector('.slide');
-        slideElement.appendChild(img); 
-      });
-    </script>
-    
-
-<script>
-  fetch("https://open-marketplace.qapitacorp.com/api/v1/d/listings")
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.log("must be cors error",error))
-</script>
-
-    <!-- open market bundle scripts -->
-    <!-- <script>
-      fetch(
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/openmarketconfig.json"
-      )
+      fetch(listingsEndpoint)
         .then((response) => response.json())
-        // .then((data) => {
-        //   window.configData = data.baseURL;
-        // })
-        .catch((error) => console.log("error fetching omp config", error));
-    </script> -->
+        .then((publicData) => {
+          const carouselElement = document.querySelector(
+            ".custom-slide-track-two"
+          );
+          const carouselContent = publicData.data
+            .map(
+              (company) => `
+            <div class="slide">
+             <a href="/outreach/d/listings/${company.id}/view">
 
-<!-- <script>
-  fetch("https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/openmarketconfig.json")
-    .then((response) => response.json())
-    .then((data) => {
-      // Once the config data is retrieved, you can dynamically create and append script elements
-      const scriptUrls = [
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/main.d00bdca8.js",
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/867.74a39af1.js",
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/antd_react.f9f708c5.js",
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/syncfusion.58ecef31.js",
-        "https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/runtime.597b000d.js"
-      ];
+              </a>
+              
+              </div>
+              `
+            )
+            .join("");
 
-      scriptUrls.forEach((url) => {
-        const scriptElement = document.createElement("script");
-        scriptElement.src = url;
-        scriptElement.defer = true;
-        document.head.appendChild(scriptElement);
-      });
-    })
-    .catch((error) => console.log("error fetching omp config", error));
-</script> -->
+          carouselElement.innerHTML = carouselContent;
 
-   <!-- <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/main.ebea8981.css"
-  />
-  <link
-  rel="stylesheet"
-  href="https://raw.githubusercontent.com/sameer-qapita/kyc-bundle/master/open-market/syncfusion.f642b122.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/antd_react.08703cb9.css"
-/>
-<link
-rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/sameer-qapita/kyc-bundle@master/open-market/867.b6a56e30.css"
-  /> -->
+          publicData.data.forEach((company, index) => {
+            const organizationId = company.organizationId;
+            const slideElement = carouselElement
+              .querySelectorAll(".slide")
+              [index].querySelector("img");
+
+            fetch(
+              `https://open-marketplacetest.qapita.dev/api/v1/d/organizations/${organizationId}/logo`
+            )
+              .then((response) => {
+                if (response.status === 200) {
+                  return response.text();
+                } else {
+                  return "https://uploads-ssl.webflow.com/633e5454c8dec0fa090556c5/651f04affb63f9233626f84c_no-logo.png";
+                }
+              })
+              .then((srcPath) => {
+                const img = document.createElement("img");
+                img.src = srcPath;
+                const slideElement = document
+                  .querySelectorAll(".custom-slide-track-two .slide")
+                  [index].querySelector("a");
+                slideElement.appendChild(img);
+                const pElement = document.createElement("p");
+                const brandName = document.createElement("b");
+                brandName.textContent = `${company.name}`;
+                pElement.appendChild(brandName);
+                slideElement.appendChild(pElement);
+              })
+              .catch((error) => {
+                console.log("failed to fetch logo", error);
+              });
+          });
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+    </script>
+  </head>
+
   <body>
-    <div id="root" style="height: 600px; overflow: hidden"></div>
     <div class="custom-slider">
       <div class="custom-slide-track"></div>
+      <div class="custom-slide-track-two"></div>
     </div>
+
     <script>
-       document.querySelectorAll('.custom-slide-track').forEach(slide => {
-    console.log(slide,'slide node')
-    slide.addEventListener('mouseenter', () => {
-      slide.style.animationPlayState = 'paused';
-      console.log('paused');
-    });
+      document
+        .querySelectorAll(".custom-slide-track, .custom-slide-track-two")
+        .forEach((slide) => {
+          const firstSlide = document.querySelector(".custom-slide-track");
+          const secondSlide = document.querySelector(".custom-slide-track-two");
+          slide.addEventListener("mouseenter", () => {
+            firstSlide.style.animationPlayState = "paused";
+            secondSlide.style.animationPlayState = "paused";
+          });
 
-    slide.addEventListener('mouseleave', () => {
-      slide.style.animationPlayState = 'running';
-      console.log('running');
-
-    });
-  });
+          slide.addEventListener("mouseleave", () => {
+            firstSlide.style.animationPlayState = "running";
+            secondSlide.style.animationPlayState = "running";
+          });
+        });
     </script>
-    <div>This will be the marketplace container</div>
-    <div class="slide">
-      <p>Dyson</p>
-    </div>
-    <!-- <div style="height: 100vh; width: 100vw">
-      <iframe
-        src="https://marketplacedemo.qapita.com/"
-        frameborder="0"
-        height="100%"
-        width="100%"
-      ></iframe>
-    </div> -->
-
-
-</head>
   </body>
 </html>
