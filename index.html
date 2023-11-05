@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
+      :root {
+        --desktop-height: 165px;
+        --mobile-height: 70px;
+      }
       white-gradient {
         background: linear-gradient(
           to right,
@@ -22,16 +26,31 @@
           transform: translateX(-100%);
         }
       }
+      @keyframes glow {
+        0% {
+          background-color: hsl(200, 20%, 70%);
+        }
+        100% {
+          background-color: hsl(200, 20%, 95%);
+        }
+      }
 
       .custom-slider {
-        background: white;
+        background: #fdfcfa;
         box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.125);
+        border-top: 1px solid #d3d3d3;
         display: flex;
-        height: 165px;
+        height: var(--desktop-height);
         margin: auto;
         overflow: hidden;
         position: relative;
         width: calc(100vw - 25px);
+      }
+      @media (max-width: 600px) {
+        .custom-slider {
+          height: var(--mobile-height);
+          width: 100vw;
+        }
       }
 
       .custom-slider::before,
@@ -42,23 +61,26 @@
           rgba(255, 255, 255, 0) 100%
         );
         content: "";
-        height: 100px;
+        height: var(--desktop-height);
         position: absolute;
-        width: 200px;
+        width: 50px;
         z-index: 2;
       }
 
+      @media (max-width: 600px) {
+        .custom-slider::before,
+        .custom-slider::after {
+          height: var(--mobile-height);
+          width: 25px;
+        }
+      }
       .custom-slider::after {
-        width: 50px;
-        height: 150px;
         right: 0;
         top: 0;
         transform: rotateZ(180deg);
       }
 
       .custom-slider::before {
-        width: 50px;
-        height: 150px;
         left: 0;
         top: 0;
       }
@@ -67,17 +89,33 @@
       .custom-slide-track-two {
         animation: scroll 20s linear infinite;
         display: flex;
-        width: calc(200px * 13);
       }
 
       .slide {
-        padding: 10px;
+        padding: 10px 20px;
+        position: relative;
         display: flex;
         flex-direction: column;
-        border-right: 1px solid #d3d3d3;
         min-width: 200px;
         align-items: center;
         width: 100%;
+      }
+      @media (max-width: 600px) {
+        .slide {
+          padding: 0px;
+        }
+      }
+      .slide :hover {
+        text-decoration: underline;
+      }
+      .slide::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        border-left: 2px solid #d3d3d3;
+        height: 70%;
+        transform: translate(-50%, -50%);
       }
 
       .slide a {
@@ -87,13 +125,42 @@
         color: inherit;
         height: -webkit-fill-available;
       }
+      @media (max-width: 600px) {
+        .slide a {
+          display: flex;
+          gap: 10px;
+          text-align: initial;
+          align-items: center;
+        }
+      }
       .slide a img {
         height: 60%;
         padding-bottom: 10px;
       }
-      .slide a p {
-        height: 20%;
+      @media (max-width: 600px) {
+        .slide a img {
+          height: 70%;
+          padding: 0px;
+        }
       }
+      .slide a p {
+        font-weight: bold;
+        max-width: 170px;
+        word-break: break-word;
+        white-space: pre-wrap;
+        /* text-overflow: ellipsis; */
+        overflow: hidden;
+      }
+      @media (max-width: 600px) {
+        .slide a p {
+          max-width: 110px;
+          text-overflow: ellipsis;
+        }
+      }
+
+      /* .slide a p:hover {
+        text-decoration: underline;
+      } */
       .slide img {
         height: calc(100% - 90px);
         border-radius: 7px;
@@ -105,11 +172,60 @@
         background: rgb(234, 225, 249, 0.3);
         cursor: pointer;
       }
+
+      .omp-submenu-dropdown {
+        display: block;
+        min-width: 160px;
+        max-width: fit-content;
+      }
+      .omp-user-name {
+        font: normal 700 clamp(0.675rem, calc(0.675rem + 1vmin), 1.125rem) / 1
+          Roboto;
+        color: #633ea5;
+        cursor: default;
+        padding: 1rem;
+        display: block;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: white;
+      }
+      .omp-submenu-link {
+        float: none;
+        color: #333333;
+        background-color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+        font: normal 500 clamp(0.675rem, calc(0.675rem + 1vmin), 1.125rem) / 1
+          Roboto;
+      }
+
+      .omp-submenu-link:hover {
+        color: #633ea5;
+        cursor: pointer;
+        background-color: #f9f5ff;
+        transition: all 100ms;
+      }
+
+      .loading-skeleton {
+        opacity: 0.7;
+        animation: glow 1s linear infinite alternate;
+      }
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 14px;
+      }
+      .navbar-menus {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+      }
     </style>
 
     <script defer>
       const listingsEndpoint =
-        "https://open-marketplacetest.qapita.dev/api/v1/d/listings";
+        "https://open-marketplacedev.qapita.dev/api/v1/d/listings";
       fetch(listingsEndpoint)
         .then((response) => response.json())
         .then((publicData) => {
@@ -117,15 +233,17 @@
 
           const carouselContent = publicData.data
             .map(
-              (company) => `
-            <div class="slide">
-             <a href="/outreach/d/listings/${company.id}/view">
-              </a>
-              </div>
-              `
+              (company, index) =>
+                `
+                        <div class="slide">
+                            <a href="/outreach/d/listings/${company.id}/view">
+
+                            </a>
+
+                        </div>
+                    `
             )
             .join("");
-          // <p><b>${company.name}</b></p>
 
           carouselElement.innerHTML = carouselContent;
 
@@ -136,7 +254,7 @@
               [index].querySelector("img");
 
             fetch(
-              `https://open-marketplacetest.qapita.dev/api/v1/d/organizations/${organizationId}/logo`
+              `https://open-marketplacedev.qapita.dev/api/v1/d/organizations/${organizationId}/logo`
             )
               .then((response) => {
                 if (response.status === 200) {
@@ -152,11 +270,9 @@
                   .querySelectorAll(".custom-slide-track .slide")
                   [index].querySelector("a");
                 slideElement.appendChild(img);
-                const pElement = document.createElement("p");
-                const brandName = document.createElement("b");
-                brandName.textContent = `${company.name}`;
-                pElement.appendChild(brandName);
-                slideElement.appendChild(pElement);
+                const brandName = document.createElement("p");
+                brandName.textContent = `${company.brand}`;
+                slideElement.appendChild(brandName);
               })
               .catch((error) => {
                 console.log("failed to fetch logo", error);
@@ -175,14 +291,15 @@
           );
           const carouselContent = publicData.data
             .map(
-              (company) => `
-            <div class="slide">
-             <a href="/outreach/d/listings/${company.id}/view">
+              (company, index) =>
+                `
+                        <div class="slide">
+                            <a href="/outreach/d/listings/${company.id}/view">
 
-              </a>
-              
-              </div>
-              `
+                            </a>
+
+                        </div>
+                    `
             )
             .join("");
 
@@ -195,7 +312,7 @@
               [index].querySelector("img");
 
             fetch(
-              `https://open-marketplacetest.qapita.dev/api/v1/d/organizations/${organizationId}/logo`
+              `https://open-marketplacedev.qapita.dev/api/v1/d/organizations/${organizationId}/logo`
             )
               .then((response) => {
                 if (response.status === 200) {
@@ -212,9 +329,7 @@
                   [index].querySelector("a");
                 slideElement.appendChild(img);
                 const pElement = document.createElement("p");
-                const brandName = document.createElement("b");
-                brandName.textContent = `${company.name}`;
-                pElement.appendChild(brandName);
+                pElement.textContent = `${company.brand}`;
                 slideElement.appendChild(pElement);
               })
               .catch((error) => {
@@ -227,8 +342,172 @@
   </head>
 
   <body>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var openMarketNav = document.querySelectorAll("#openmarketnav");
+        var corporateNav = document.getElementById("corporatenav");
+
+        function showElementBasedOnCondition(userData) {
+          if (userData && userData.isLoggedIn) {
+            console.log(openMarketNav[0], "true");
+            openMarketNav.forEach((nodeList) => {
+              console.log("live update on html collection");
+              nodeList.classList.remove("custom-hidden");
+            });
+            corporateNav.classList.add("custom-hidden");
+
+            if (userData.role === "Investor") {
+              const dmLogged = document.getElementsByClassName("dmlogged")[0];
+              console.log(dmLogged, "dmLogged element");
+              dmLogged.classList.add("custom-hidden");
+            } else if (userData.role === "DealManager") {
+              const investorLogged =
+                document.getElementsByClassName("investorlogged")[0];
+              console.log(investorLogged, "investorLogged element");
+              investorLogged.classList.add("custom-hidden");
+            }
+            // cogsettings
+            let isSubNavMenuVisible = false;
+            const cogWheel = document.querySelector(
+              ".openmarketnav.openmarket-cogwheel"
+            );
+            console.log(cogWheel, "cogWheel exists");
+            cogWheel.addEventListener("click", () => {
+              if (!isSubNavMenuVisible) {
+                const parentDiv = document.createElement("div");
+                parentDiv.classList.add("omp-submenu-dropdown");
+
+                const nameSpan = document.createElement("span");
+                nameSpan.classList.add("omp-user-name");
+                nameSpan.textContent =
+                  userData.name.firstName + " " + userData.name.lastName;
+                parentDiv.appendChild(nameSpan);
+
+                if (userData.role === "DealManager") {
+                  console.log(userData, "DM info");
+                  const userDetailsLink = document.createElement("a");
+                  userDetailsLink.classList.add("omp-submenu-link");
+                  userDetailsLink.href = `${window.location.origin}/outreach/users`;
+                  userDetailsLink.textContent = "User Details";
+                  parentDiv.appendChild(userDetailsLink);
+
+                  const settingsLink = document.createElement("a");
+                  settingsLink.classList.add("omp-submenu-link");
+                  settingsLink.href = `${window.location.origin}/outreach/settings`;
+                  settingsLink.textContent = "Settings";
+                  parentDiv.appendChild(settingsLink);
+                }
+
+                const logoutSpan = document.createElement("a");
+                logoutSpan.classList.add("omp-logout");
+                logoutSpan.href =
+                  "https://dbx5fu8doywo9.cloudfront.net/outreach/logout";
+                logoutSpan.classList.add("omp-submenu-link");
+                logoutSpan.textContent = "logout";
+                parentDiv.appendChild(logoutSpan);
+
+                // logout Event
+                logoutSpan.addEventListener("click", () => {
+                  localStorage.removeItem("userData");
+                  console.log(userData, "post logout");
+                  // After logout send an Event to omp
+                  document.dispatchEvent(new customEvent("userDataChanged"));
+                });
+
+                cogWheel.appendChild(parentDiv);
+                isSubNavMenuVisible = true;
+
+                document.addEventListener("click", closeSubMenu);
+              }
+            });
+
+            function closeSubMenu(event) {
+              const subNavMenu = document.querySelector(
+                ".omp-submenu-dropdown"
+              );
+              if (subNavMenu && !cogWheel.contains(event.target)) {
+                subNavMenu.remove();
+                isSubNavMenuVisible = false;
+              }
+            }
+
+            // cogsettings
+          } else if (!userData.isLoggedIn) {
+            console.log(openMarketNav, "false");
+            openMarketNav.forEach((nodeList) =>
+              nodeList.classList.add("custom-hidden")
+            );
+            corporateNav.classList.remove("custom-hidden");
+          }
+        }
+
+        // functions to execute when DOM loads
+        const LoggedUserData = JSON.parse(localStorage.getItem("userData"));
+        showElementBasedOnCondition(LoggedUserData);
+
+        // Listent to any change in logged state
+        // window.addEventListener("userDataChanged", function () {
+        //   showElementBasedOnCondition(window.userData);
+        // });
+
+        // Custom event | check on window or document trigger?
+        document.addEventListener("userDataChanged", ({ detail }) => {
+          localStorage.setItem("userData", JSON.stringify(detail));
+          showElementBasedOnCondition(detail);
+        });
+      });
+    </script>
+
+    <div class="openmarketnav openmarket-cogwheel">cog</div>
     <div class="custom-slider">
-      <div class="custom-slide-track"></div>
+      <div class="custom-slide-track">
+        <div class="slide">
+          <a
+            ><img src="./images/bear.jpeg" alt="" />
+            <p>Brand name</p>
+          </a>
+        </div>
+
+        <div class="slide">
+          <a
+            ><img src="./images/whale shark.jpeg" alt="" />
+            <p>Brand name</p>
+          </a>
+        </div>
+        <div class="slide">
+          <a
+            ><img src="./images/no-logo-found.png" alt="" />
+            <p>Brand name</p></a
+          >
+        </div>
+        <div class="slide">
+          <a
+            ><img src="./images/whale.jpeg" alt="" />
+            <p>Brand name</p>
+          </a>
+        </div>
+        <div class="slide">
+          <a
+            ><img src="./images/no-logo.png" alt="" />
+            <p>Brand name</p>
+          </a>
+        </div>
+        <div class="slide">
+          <a
+            ><img src="./images/squirrel.jpeg" alt="" />
+            <p>Brand name</p></a
+          >
+        </div>
+        <div class="slide">
+          <a
+            ><img
+              src="./images/crompton-logo-200AFCBC3B-seeklogo.com.png"
+              alt=""
+            />
+            <p>Brand name</p>
+          </a>
+        </div>
+      </div>
       <div class="custom-slide-track-two"></div>
     </div>
 
@@ -249,5 +528,16 @@
           });
         });
     </script>
+
+    <div class="nav-container">
+      <div class="loading-skeleton">logo</div>
+      <div class="navbar-menus">
+        <span class="loading-skeleton">listings</span
+        ><span class="loading-skeleton">resources</span
+        ><span class="loading-skeleton">about</span
+        ><span class="loading-skeleton">qapita</span
+        ><span class="loading-skeleton">cog</span>
+      </div>
+    </div>
   </body>
 </html>

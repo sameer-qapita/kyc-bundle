@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function corporateWebsiteHeader() {}
+
+      corporateWebsiteHeader.prototype = {
+        isUserLoggedIn: function (context) {
+          return (
+            context &&
+            context.userInfo &&
+            context.userInfo.isLoggedIn &&
+            !!context.userInfo.role
+          );
+        },
+
+        _refreshHeader: function (context) {
+          this._hideNavItemsOnStart(context);
+          var isLoggedIn = this.isUserLoggedIn(context);
+          if (!isLoggedIn) {
+            this._showUserLoggedOutNav(context);
+            return;
+          }
+          this._showUserLoggedInNav(context);
+          this._setRoleBasedNavItemVisibility(context);
+          this._renderCogWheelMenu(context);
+          this._refreshCogWheel(context);
+        },
+
+        _showUserLoggedInNav: function (context) {
+          var openMarketNav = document.querySelectorAll(
+            `#${context.outreachNavItemsSelector}`
+          );
+          var corporateNav = document.querySelectorAll(
+            `[class*="${context.corporateNavItemsSelector}"]`
+          );
+
+          // hides corporate navItem ex: login / Book a Demo
+          openMarketNav.forEach((nodeList) =>
+            nodeList.classList.remove("custom-hidden")
+          );
+          corporateNav.forEach((nodeList) =>
+            nodeList.classList.add("custom-hidden")
+          );
+        },
+
+        _showUserLoggedOutNav: function (context) {
+          var openMarketNav = document.querySelectorAll(
+            `#${context.outreachNavItemsSelector}`
+          );
+          var corporateNav = document.querySelectorAll(
+            `[class*="${context.corporateNavItemsSelector}"]`
+          );
+
+          // hide outreachNavItem ex: listings / manage / cogWheel
+          openMarketNav.forEach((nodeList) => {
+            nodeList.classList.add("custom-hidden");
+          });
+          corporateNav.forEach((nodeList) =>
+            nodeList.classList.remove("custom-hidden")
+          );
+
+          if (window.location.pathname.includes("/outreach")) {
+            const signupOrDemo = document.querySelector(
+              `#${context.signupOrDemoSelector}`
+            );
+            signupOrDemo.innerText = "Signup";
+            signupOrDemo.href = "/outreach/investor/signup";
+          } else {
+            const signupOrDemo = document.querySelector(
+              `#${context.signupOrDemoSelector}`
+            );
+            signupOrDemo.innerText = "Book a Demo";
+            signupOrDemo.href = "/book-a-demo";
+          }
+        },
+
+        _setRoleBasedNavItemVisibility: function (context) {
+          if (
+            context.userInfo.role === "Investor" ||
+            context.userInfo.role === "Buyer"
+          ) {
+            const dmLogged = document.getElementsByClassName(
+              context.DMLoggedSelector
+            )[0];
+            dmLogged.classList.add("custom-hidden");
+          } else if (
+            context.userInfo.role === "DealManager" ||
+            context.userInfo.role === "Super Admin"
+          ) {
+            const investorLogged = document.getElementsByClassName(
+              context.investorLoggedSelector
+            )[0];
+            investorLogged.classList.add("custom-hidden");
+          }
+        },
+        _renderCogWheelMenu: function (context) {
+          let currentWidth = window.innerWidth;
+
+          function createCogWheelIcon() {
+            const rightViewMB = document.querySelector(
+              ".right-view-mb .openmarketnav.openmarket-cogwheel"
+            );
+
+            if (!rightViewMB) {
+              // Creates CogWheel Icon
+              const cogWheelIconElement = document.createElement("div");
+              cogWheelIconElement.className =
+                "openmarketnav openmarket-cogwheel";
+              const icon = document.createElement("img");
+              icon.src =
+                "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/651d0a2aa7ba2062973396da_Settings_Icon.png";
+              const iconLink = document.createElement("a");
+              iconLink.className = "nav-link cogwheel-mb w-inline-block";
+              iconLink.appendChild(icon);
+              cogWheelIconElement.appendChild(iconLink);
+
+              const navBarItemsList = document.querySelector(".right-view-mb");
+              navBarItemsList.appendChild(cogWheelIconElement);
+            }
+          }
+
+          function removeCogWheelIcon() {
+            const navBarItemsList = document.querySelector(
+              ".right-view-mb .openmarketnav.openmarket-cogwheel"
+            );
+            if (navBarItemsList) {
+              navBarItemsList.remove();
+            }
+          }
+
+          function handleMediaQuery() {
+            const newWidth = window.innerWidth;
+
+            if (newWidth <= 991) {
+              createCogWheelIcon();
+            } else if (newWidth >= 991) {
+              removeCogWheelIcon();
+            }
+            currentWidth = newWidth;
+          }
+
+          handleMediaQuery();
+
+          window.addEventListener("resize", handleMediaQuery);
+          //
+
+          // render the dropdown menu
+          const cogWheel = document.querySelector(
+            `.${context.cogWheelSelector}`
+          );
+
+          const cogWheelMB = document.querySelector(
+            ".right-view-mb .openmarketnav.openmarket-cogwheel"
+          );
+          const existingSubmenu = document.querySelector(
+            `.${context.outreachSubMenuDropdownSelector}`
+          );
+          if (existingSubmenu) {
+            existingSubmenu.remove();
+          }
+
+          const outreachDropdownDiv = document.createElement("div");
+          outreachDropdownDiv.classList.add(
+            context.outreachSubMenuDropdownSelector
+          );
+
+          const nameSpan = document.createElement("span");
+          nameSpan.classList.add("omp-user-name");
+          nameSpan.textContent =
+            context.userInfo?.name.firstName +
+            " " +
+            context.userInfo?.name.lastName;
+          outreachDropdownDiv.appendChild(nameSpan);
+
+          if (
+            context.userInfo.role === "DealManager" ||
+            context.userInfo.role === "Super Admin"
+          ) {
+            // Conditionally show contents of CogWheel dropdown
+
+            const userDetailsLink = document.createElement("a");
+            userDetailsLink.classList.add("omp-submenu-link");
+            userDetailsLink.href = `${window.location.origin}/outreach/users`;
+            userDetailsLink.textContent = "User Details";
+            outreachDropdownDiv.appendChild(userDetailsLink);
+
+            const settingsLink = document.createElement("a");
+            settingsLink.classList.add("omp-submenu-link");
+            settingsLink.href = `${window.location.origin}/outreach/settings`;
+            settingsLink.textContent = "Settings";
+            outreachDropdownDiv.appendChild(settingsLink);
+          }
+
+          const logoutSpan = document.createElement("a");
+          logoutSpan.classList.add("omp-logout");
+          logoutSpan.href = `${window.location.origin}/outreach/logout`;
+          logoutSpan.classList.add("omp-submenu-link");
+          logoutSpan.textContent = "logout";
+          logoutSpan.addEventListener("click", () => {
+            localStorage.removeItem(context.localStorageUserInfo);
+            window.dispatchEvent(
+              new customEvent(context.userInfoChangedEventListner)
+            );
+          });
+
+          outreachDropdownDiv.appendChild(logoutSpan);
+
+          cogWheel.appendChild(outreachDropdownDiv);
+          if (cogWheelMB) {
+            cogWheelMB.appendChild(outreachDropdownDiv);
+          }
+        },
+
+        _refreshCogWheel: function (context) {
+          const cogWheel = document.querySelector(
+            `.${context.cogWheelSelector}`
+          );
+          const existingSubmenu = document.querySelector(
+            `.${context.outreachSubMenuDropdownSelector}`
+          );
+          if (existingSubmenu) {
+            existingSubmenu.remove();
+          }
+          cogWheel.addEventListener("click", () => {
+            // show the cogwheel dropdown menu(omp-submenu-dropdown)
+            this._renderCogWheelMenu(context);
+
+            // listener to remove the cogwheel dropdown list
+            document.addEventListener("click", (event) => {
+              const subNavMenu = document.querySelector(
+                `.${context.outreachSubMenuDropdownSelector}`
+              );
+              if (subNavMenu && !cogWheel.contains(event.target)) {
+                subNavMenu.remove();
+              }
+            });
+          });
+
+          /* ------- mobile responsive event Listener ------ */
+          const cogWheelMB = document.querySelector(
+            ".right-view-mb .openmarketnav.openmarket-cogwheel"
+          );
+          if (cogWheelMB) {
+            cogWheelMB.addEventListener("touchstart", () => {
+              this._renderCogWheelMenu(context);
+
+              // listener to remove the cogwheel dropdown list
+              document.addEventListener("touchend", (event) => {
+                const subNavMenu = document.querySelector(
+                  `.${context.outreachSubMenuDropdownSelector}`
+                );
+                if (subNavMenu && !cogWheelMB.contains(event.target)) {
+                  subNavMenu.remove();
+                }
+              });
+            });
+          }
+          /* --- mobile responsive event listener --- */
+        },
+        _hideNavItemsOnStart: function (context) {
+          var openMarketNav = document.querySelectorAll(
+            `#${context.outreachNavItemsSelector}`
+          );
+
+          openMarketNav.forEach((nodeList) => {
+            nodeList.classList.add("custom-hidden");
+          });
+        },
+      };
+
+      // Global data
+      const defaultUserInfo = {
+        name: {
+          firstName: "",
+          middleName: "",
+          lastName: "",
+        },
+        role: "",
+        isLoggedIn: false,
+      };
+
+      var context = {
+        // Careful when changing the names
+        userInfo: defaultUserInfo,
+        corporateNavItemsSelector: "corporatenav",
+        outreachNavItemsSelector: "openmarketnav",
+        signupOrDemoSelector: "signup-demo",
+        cogWheelSelector: "openmarketnav.openmarket-cogwheel",
+        DMLoggedSelector: "dmlogged",
+        investorLoggedSelector: "investorlogged",
+        outreachSubMenuDropdownSelector: "omp-submenu-dropdown",
+        userInfoChangedEventListner: "userDataChanged",
+        localStorageUserInfo: "userData",
+      };
+
+      // On DOM load
+      document.addEventListener("DOMContentLoaded", function () {
+        const userInfo = JSON.parse(
+          localStorage.getItem(context.localStorageUserInfo)
+        );
+        context.userInfo = userInfo;
+
+        corporateWebsiteHeader.prototype.isUserLoggedIn(context);
+        corporateWebsiteHeader.prototype._refreshHeader(context);
+      });
+
+      // Event Listener whenever the userInfo changes
+      document.addEventListener(
+        context.userInfoChangedEventListner,
+        ({ detail }) => {
+          localStorage.setItem(
+            context.localStorageUserInfo,
+            JSON.stringify(detail)
+          );
+          context.userInfo = detail;
+
+          corporateWebsiteHeader.prototype.isUserLoggedIn(context);
+          corporateWebsiteHeader.prototype._refreshHeader(context);
+        }
+      );
+    </script>
+  </body>
+</html>
