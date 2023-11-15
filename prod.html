@@ -6,7 +6,162 @@
     <title>Document</title>
   </head>
   <body>
+    <!-- UAT :  d3lt2p4c0kq23n.cloudfront.net -->
+    <!-- Test : d16zegszd5qaou.cloudfront.net -->
     <script>
+      let envURL = "d16zegszd5qaou.cloudfront.net";
+      if (window.location.origin === "https://marketplaceuat.qapita.dev") {
+        let envURL = "d3lt2p4c0kq23n.cloudfront.net";
+      }
+      document
+        .querySelectorAll(".custom-slide-track, .custom-slide-track-two")
+        .forEach((slide) => {
+          const firstSlide = document.querySelector(".custom-slide-track");
+          const secondSlide = document.querySelector(".custom-slide-track-two");
+          slide.addEventListener("mouseenter", () => {
+            firstSlide.style.animationPlayState = "paused";
+            secondSlide.style.animationPlayState = "paused";
+          });
+
+          slide.addEventListener("mouseleave", () => {
+            firstSlide.style.animationPlayState = "running";
+            secondSlide.style.animationPlayState = "running";
+          });
+        });
+
+      // mobile reponsive
+      document
+        .querySelectorAll(".custom-slide-track, .custom-slide-track-two")
+        .forEach((slide) => {
+          const firstSlide = document.querySelector(".custom-slide-track");
+          const secondSlide = document.querySelector(".custom-slide-track-two");
+          slide.addEventListener("touchstart", () => {
+            firstSlide.style.animationPlayState = "paused";
+            secondSlide.style.animationPlayState = "paused";
+          });
+
+          slide.addEventListener("touchend", () => {
+            firstSlide.style.animationPlayState = "running";
+            secondSlide.style.animationPlayState = "running";
+          });
+        });
+    </script>
+    <script>
+      function _renderManage() {
+        const menuItemsData = [
+          {
+            title: "Blocks",
+            subtitle: "View Blocks",
+            link: "/outreach/blocks",
+            iconSrc:
+              "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/6548b3735fb5b25d5fc259ca_blocks.png",
+            iconAlt: "Blocks",
+            iconClass: "menu-icon menu-cap",
+          },
+          {
+            title: "Investors",
+            subtitle: "View Investor Master List",
+            link: "/outreach/investors",
+            iconSrc:
+              "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/6548b37c0bd21a7cd52e821a_investorMasterList.png",
+            iconAlt: "Investors",
+            iconClass: "menu-icon",
+          },
+        ];
+
+        const menuParent = document.querySelector(
+          ".menu-dropdown-list3.w-dropdown-list"
+        );
+
+        const toggleElement = document.querySelector(
+          ".nav-link.w-dropdown-toggle"
+        );
+        const listElement = document.querySelector(
+          ".menu-dropdown-list3.w-dropdown-list"
+        );
+
+        function toggleMenu() {
+          listElement.classList.toggle("w--open");
+          const isMenuOpen = listElement.classList.contains("w--open");
+          toggleElement.setAttribute(
+            "aria-expanded",
+            isMenuOpen ? "true" : "false"
+          );
+        }
+
+        toggleElement.addEventListener("click", toggleMenu);
+
+        // Loop through the menuItemsData array and create menu items
+        menuItemsData.forEach((item) => {
+          const menuItem = document.createElement("div");
+          menuItem.classList.add("menu-dropdown-grid-item");
+
+          const linkElement = document.createElement("a");
+          linkElement.href = item.link;
+          linkElement.classList.add("menu-link", "w-inline-block");
+          linkElement.tabIndex = 0;
+
+          const iconBlock = document.createElement("div");
+          iconBlock.classList.add("menu-icon-block");
+
+          const iconElement = document.createElement("img");
+          iconElement.src = item.iconSrc;
+          iconElement.loading = "lazy";
+          iconElement.alt = item.iconAlt;
+          iconElement.classList.add(...item.iconClass.split(" "));
+
+          const linkItem = document.createElement("div");
+          linkItem.classList.add("menu-link-item");
+
+          const linkTitle = document.createElement("div");
+          linkTitle.classList.add("menu-link-title");
+          linkTitle.textContent = item.title;
+
+          const subtitle = document.createElement("div");
+          subtitle.classList.add("menu-subtitle");
+          subtitle.textContent = item.subtitle;
+
+          iconBlock.appendChild(iconElement);
+          linkItem.appendChild(linkTitle);
+          linkItem.appendChild(subtitle);
+          linkElement.appendChild(iconBlock);
+          linkElement.appendChild(linkItem);
+          menuItem.appendChild(linkElement);
+
+          menuParent.appendChild(menuItem);
+        });
+      }
+    </script>
+    <script>
+      document.body.style.overflowX = "hidden";
+    </script>
+
+    <script>
+      // Global data
+      const defaultUserInfo = {
+        name: {
+          firstName: "",
+          middleName: "",
+          lastName: "",
+        },
+        role: "",
+        isLoggedIn: false,
+      };
+
+      let context = {
+        // Careful when changing the names
+        userInfo: defaultUserInfo,
+        corporateNavItemsSelector: "corporatenav",
+        outreachNavItemsSelector: "openmarketnav",
+        signupOrDemoSelector: "signup-demo",
+        cogWheelSelector: "openmarketnav.openmarket-cogwheel",
+        DMLoggedSelector: "dmlogged",
+        investorLoggedSelector: "investorlogged",
+        outreachSubMenuDropdownSelector: "omp-submenu-dropdown",
+        userInfoChangedEventListner: "userDataChanged",
+        localStorageUserInfo: "userData",
+      };
+
       function corporateWebsiteHeader() {}
 
       corporateWebsiteHeader.prototype = {
@@ -40,16 +195,20 @@
             `[class*="${context.corporateNavItemsSelector}"]`
           );
 
-          // hides corporate navItem ex: login / Book a Demo
           openMarketNav.forEach((nodeList) =>
             nodeList.classList.remove("custom-hidden")
           );
+          this._removeLoginDemoNavItem(context);
+          // hides corporate navItem ex: login / Book a Demo
           corporateNav.forEach((nodeList) =>
             nodeList.classList.add("custom-hidden")
           );
         },
 
         _showUserLoggedOutNav: function (context) {
+          if (context.userInfo) {
+            console.log(context.userInfo.role, "role");
+          }
           var openMarketNav = document.querySelectorAll(
             `#${context.outreachNavItemsSelector}`
           );
@@ -65,6 +224,9 @@
             nodeList.classList.remove("custom-hidden")
           );
 
+          this._renderLoginDemoNavItem(context);
+
+          // set the signup and login on window path outreach
           if (window.location.pathname.includes("/outreach")) {
             const signupOrDemo = document.querySelector(
               `#${context.signupOrDemoSelector}`
@@ -100,14 +262,13 @@
           }
         },
         _renderCogWheelMenu: function (context) {
-          let currentWidth = window.innerWidth;
-
           function createCogWheelIcon() {
             const rightViewMB = document.querySelector(
               ".right-view-mb .openmarketnav.openmarket-cogwheel"
             );
 
             if (!rightViewMB) {
+              console.log(rightViewMB, "rightviewMB");
               // Creates CogWheel Icon
               const cogWheelIconElement = document.createElement("div");
               cogWheelIconElement.className =
@@ -122,15 +283,17 @@
 
               const navBarItemsList = document.querySelector(".right-view-mb");
               navBarItemsList.appendChild(cogWheelIconElement);
+              console.log(navBarItemsList, "create cogWheel executed");
             }
           }
 
           function removeCogWheelIcon() {
-            const navBarItemsList = document.querySelector(
+            const rightCogWheel = document.querySelector(
               ".right-view-mb .openmarketnav.openmarket-cogwheel"
             );
-            if (navBarItemsList) {
-              navBarItemsList.remove();
+            console.log(rightCogWheel, "desktop so remove cog");
+            if (rightCogWheel) {
+              rightCogWheel.remove();
             }
           }
 
@@ -138,18 +301,20 @@
             const newWidth = window.innerWidth;
 
             if (newWidth <= 991) {
+              console.log("mobile");
               createCogWheelIcon();
             } else if (newWidth >= 991) {
+              console.log("desktop");
               removeCogWheelIcon();
             }
-            currentWidth = newWidth;
           }
 
           handleMediaQuery();
 
+          console.log("script ends at a window eventlistener");
           window.addEventListener("resize", handleMediaQuery);
-          //
 
+          console.log("render start");
           // render the dropdown menu
           const cogWheel = document.querySelector(
             `.${context.cogWheelSelector}`
@@ -221,6 +386,7 @@
           const cogWheel = document.querySelector(
             `.${context.cogWheelSelector}`
           );
+
           const existingSubmenu = document.querySelector(
             `.${context.outreachSubMenuDropdownSelector}`
           );
@@ -229,6 +395,7 @@
           }
           cogWheel.addEventListener("click", () => {
             // show the cogwheel dropdown menu(omp-submenu-dropdown)
+
             this._renderCogWheelMenu(context);
 
             // listener to remove the cogwheel dropdown list
@@ -246,8 +413,10 @@
           const cogWheelMB = document.querySelector(
             ".right-view-mb .openmarketnav.openmarket-cogwheel"
           );
+
           if (cogWheelMB) {
             cogWheelMB.addEventListener("touchstart", () => {
+              console.log(cogWheelMB, "touch triggered");
               this._renderCogWheelMenu(context);
 
               // listener to remove the cogwheel dropdown list
@@ -272,56 +441,199 @@
             nodeList.classList.add("custom-hidden");
           });
         },
-      };
+        _renderLoginDemoNavItem: function (context) {
+          const corporateDiv = document.getElementById("corporatenav");
+          if (corporateDiv) {
+            corporateDiv.remove();
+          }
+          console.log("renderLoginDemoNavItem");
 
-      // Global data
-      const defaultUserInfo = {
-        name: {
-          firstName: "",
-          middleName: "",
-          lastName: "",
+          const corporatenavDiv = document.createElement("div");
+          corporatenavDiv.id = "corporatenav";
+          corporatenavDiv.classList.add("corporatenav");
+
+          const loginDropdownDiv = document.createElement("div");
+          loginDropdownDiv.classList.add("login-dropdown", "at-hide");
+
+          const wDropdownDiv = document.createElement("div");
+          wDropdownDiv.classList.add("z-1", "w-dropdown");
+
+          const navLinkLoginDiv = document.createElement("div");
+          navLinkLoginDiv.classList.add("nav-link-login", "w-dropdown-toggle");
+          navLinkLoginDiv.id = "w-dropdown-toggle-4";
+          navLinkLoginDiv.setAttribute("aria-controls", "w-dropdown-list-4");
+          navLinkLoginDiv.setAttribute("aria-haspopup", "menu");
+          navLinkLoginDiv.setAttribute("aria-expanded", "false");
+          navLinkLoginDiv.setAttribute("role", "button");
+          navLinkLoginDiv.setAttribute("tabindex", "0");
+
+          // Create the login arrow icon
+          const iconDiv = document.createElement("div");
+          iconDiv.classList.add("icon-2", "w-icon-dropdown-toggle");
+          iconDiv.setAttribute("aria-hidden", "true");
+
+          // Create the login button div
+          const lofinNavDiv = document.createElement("div");
+          lofinNavDiv.classList.add("lofin-nav");
+          lofinNavDiv.textContent = "Login";
+
+          navLinkLoginDiv.appendChild(iconDiv);
+          navLinkLoginDiv.appendChild(lofinNavDiv);
+          wDropdownDiv.appendChild(navLinkLoginDiv);
+          loginDropdownDiv.appendChild(wDropdownDiv);
+          corporatenavDiv.appendChild(loginDropdownDiv);
+
+          const menuDropdownList3Nav = document.createElement("nav");
+          menuDropdownList3Nav.classList.add(
+            "menu-dropdown-list3",
+            "w-dropdown-list"
+          );
+          menuDropdownList3Nav.id = "w-dropdown-list-4";
+          menuDropdownList3Nav.setAttribute(
+            "aria-labelledby",
+            "w-dropdown-toggle-4"
+          );
+
+          const layoutGridDiv = document.createElement("div");
+          layoutGridDiv.classList.add("w-layout-grid", "menu-dropdown-grid3");
+
+          // create a loop to render menu items
+
+          const menuItems = [
+            {
+              title: "For Issuers",
+              subtitle: "Private Companies | Founders",
+              link: "https://liquidity.qapitacorp.com/",
+              iconSrc:
+                "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/63415a26407836e8ece22209_fundraising.svg",
+              iconAlt: "Fundraising",
+              iconClass: "menu-icon menu-cap",
+            },
+            {
+              title: "For Investors",
+              subtitle: "Institutions | Family Offices",
+              link: "https://open-marketplace.qapitacorp.com/",
+              iconSrc:
+                "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b040783605e0e21b40_For-Investors.svg",
+              iconAlt: "For Investors",
+              iconClass: "menu-icon",
+            },
+            {
+              title: "For Stakeholders",
+              subtitle: "Shareholders | Employees",
+              link: "https://liquidity.qapitacorp.com/",
+              iconSrc:
+                "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b9b9d4cee75c9faabd_For%20Stakeholders.svg",
+              iconAlt: "For Stakeholders",
+              iconClass: "menu-icon",
+            },
+          ];
+
+          // Loop through the menuItems array and create menu items
+          menuItems.forEach((item) => {
+            const menuItem = document.createElement("div");
+            menuItem.classList.add("menu-dropdown-grid-item");
+            menuItem.innerHTML = `
+        <a href="${item.link}" class="menu-link w-inline-block" tabindex="0">
+            <div class="menu-icon-block">
+                <img src="${item.iconSrc}" loading="lazy" alt="${item.iconAlt}" class="${item.iconClass}">
+            </div>
+            <div class="menu-link-item">
+                <div class="menu-link-title">${item.title}</div>
+                <div class="menu-subtitle">${item.subtitle}</div>
+            </div>
+        </a>
+    `;
+            layoutGridDiv.appendChild(menuItem);
+          });
+
+          menuDropdownList3Nav.appendChild(layoutGridDiv);
+          wDropdownDiv.appendChild(menuDropdownList3Nav);
+
+          // Create the Book a Demo button
+          const bookDemoButton = document.createElement("a");
+          bookDemoButton.href = "/book-a-demo";
+          bookDemoButton.id = "signup-demo";
+          bookDemoButton.classList.add(
+            "button-fiiled",
+            "margin-left-medium",
+            "auto",
+            "w-button"
+          );
+          bookDemoButton.textContent = "Book a Demo";
+
+          corporatenavDiv.appendChild(bookDemoButton);
+
+          // append the login / signup / demo to an navbar Items List element
+          const webflowNavItemsList = document.querySelector(
+            ".nav-menu.w-nav-menu"
+          );
+          console.log(webflowNavItemsList);
+          webflowNavItemsList.appendChild(corporatenavDiv);
+
+          loginDropdownDiv.addEventListener("click", function () {
+            const navLinkLogin = document.querySelector(".nav-link-login");
+            const menuDropLevel1 = document.querySelector(
+              ".login-dropdown.at-hide"
+            );
+            const menuDropList2 =
+              menuDropLevel1.querySelector(".z-1.w-dropdown");
+            const menuDropList3 = menuDropList2.querySelector(
+              ".menu-dropdown-list3.w-dropdown-list"
+            );
+            console.log(menuDropList3, "menudroplist3");
+
+            console.log(menuDropList3, "menuDropList3");
+            navLinkLogin.classList.toggle("w--open");
+            menuDropList3.classList.toggle("w--open");
+
+            const isExpanded = navLinkLogin.classList.contains("w--open");
+            navLinkLogin.setAttribute("aria-expanded", isExpanded.toString());
+          });
         },
-        role: "",
-        isLoggedIn: false,
+        _removeLoginDemoNavItem: function () {
+          const corporateDiv = document.getElementById("corporatenav");
+          if (corporateDiv) {
+            corporateDiv.remove();
+          }
+          console.log("_removeLoginDemoNavItem");
+        },
       };
 
-      var context = {
-        // Careful when changing the names
-        userInfo: defaultUserInfo,
-        corporateNavItemsSelector: "corporatenav",
-        outreachNavItemsSelector: "openmarketnav",
-        signupOrDemoSelector: "signup-demo",
-        cogWheelSelector: "openmarketnav.openmarket-cogwheel",
-        DMLoggedSelector: "dmlogged",
-        investorLoggedSelector: "investorlogged",
-        outreachSubMenuDropdownSelector: "omp-submenu-dropdown",
-        userInfoChangedEventListner: "userDataChanged",
-        localStorageUserInfo: "userData",
-      };
+      function updateUserInfoInContext(userInfo) {
+        console.log(userInfo, "Updating userInfo in context");
+        context.userInfo = userInfo;
+
+        corporateWebsiteHeader.prototype.isUserLoggedIn(context);
+        corporateWebsiteHeader.prototype._refreshHeader(context);
+      }
 
       // On DOM load
       document.addEventListener("DOMContentLoaded", function () {
         const userInfo = JSON.parse(
           localStorage.getItem(context.localStorageUserInfo)
         );
-        context.userInfo = userInfo;
-
-        corporateWebsiteHeader.prototype.isUserLoggedIn(context);
-        corporateWebsiteHeader.prototype._refreshHeader(context);
+        console.log(userInfo, "Loaded userInfo on DOMContentLoaded");
+        updateUserInfoInContext(userInfo);
       });
 
       // Event Listener whenever the userInfo changes
       document.addEventListener(
         context.userInfoChangedEventListner,
         ({ detail }) => {
-          localStorage.setItem(
-            context.localStorageUserInfo,
-            JSON.stringify(detail)
-          );
-          context.userInfo = detail;
-
-          corporateWebsiteHeader.prototype.isUserLoggedIn(context);
-          corporateWebsiteHeader.prototype._refreshHeader(context);
+          if (
+            detail &&
+            detail.name &&
+            detail.role &&
+            detail.isLoggedIn !== undefined
+          ) {
+            localStorage.setItem(
+              context.localStorageUserInfo,
+              JSON.stringify(detail)
+            );
+            console.log(detail, "Updated userInfo in localStorage");
+            updateUserInfoInContext(detail);
+          }
         }
       );
     </script>

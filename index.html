@@ -26,6 +26,35 @@
           transform: translateX(-100%);
         }
       }
+      @-webkit-keyframes scroll {
+        0% {
+          -webkit-transform: translateX(0);
+        }
+        100% {
+          -webkit-transform: translateX(-100%);
+        }
+      }
+
+      /* hardware accelarated ios animation rendering */
+      @keyframes scroll {
+        0% {
+          transform: translate3d(0, 0, 0) translateX(0);
+        }
+        100% {
+          transform: translate3d(0, 0, 0) translateX(-100%);
+        }
+      }
+
+      @-webkit-keyframes scroll {
+        0% {
+          -webkit-transform: translate3d(0, 0, 0) translateX(0);
+        }
+        100% {
+          -webkit-transform: translate3d(0, 0, 0) translateX(-100%);
+        }
+      }
+      /*   */
+
       @keyframes glow {
         0% {
           background-color: hsl(200, 20%, 70%);
@@ -97,6 +126,7 @@
         display: flex;
         flex-direction: column;
         min-width: 200px;
+        -webkit-align-items: center;
         align-items: center;
         width: 100%;
       }
