@@ -1,13 +1,16 @@
 /**
  * **Version**:
  * 1.0.1
- * 
+ *
  * **Last Update:**
  * 05-12-2023
  */
-function corporateWebsiteHeader() { }
+function corporateWebsiteHeader() {}
 
 const baseUrl = window.location.origin;
+console.log({
+  baseUrl,
+});
 
 const menuItems = [
   {
