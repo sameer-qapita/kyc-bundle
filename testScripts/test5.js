@@ -35,7 +35,7 @@ corporateWebsiteHeader.prototype = {
       nodeList.classList.remove("custom-hidden")
     );
     this._removeLoginDemoNavItem(context);
-    this._renderCogwheelIcon(context);
+    this._renderMobileCogwheelIcon(context);
 
     // hides corporate navItem ex: login / Book a Demo
     corporateNav.forEach((nodeList) => nodeList.classList.add("custom-hidden"));
@@ -58,7 +58,7 @@ corporateWebsiteHeader.prototype = {
     corporateNav.forEach((nodeList) =>
       nodeList.classList.remove("custom-hidden")
     );
-    this._removeCogwheelIcon(context);
+    this._removeMobileCogwheelIcon(context);
     this._renderLoginDemoNavItem(context);
 
     // set the signup and login on window path outreach
@@ -138,14 +138,14 @@ corporateWebsiteHeader.prototype = {
       const windowWidth = window.innerWidth;
 
       if (windowWidth <= 991) {
-        console.log(menuDropList3, navDiv, "mobile");
-        menuDropList3.classList.add("w--nav-dropdown-list-open");
+        if (menuDropList3)
+          menuDropList3.classList.add("w--nav-dropdown-list-open");
         navDiv.classList.add("w--nav-dropdown-toggle-open");
 
         createCogWheelIcon();
       } else if (windowWidth >= 991) {
-        console.log(menuDropList3, navDiv, "desktop");
-        menuDropList3.classList.remove("w--nav-dropdown-list-open");
+        if (menuDropList3)
+          menuDropList3.classList.remove("w--nav-dropdown-list-open");
         navDiv.classList.add("w--nav-dropdown-toggle-open");
 
         removeCogWheelIcon();

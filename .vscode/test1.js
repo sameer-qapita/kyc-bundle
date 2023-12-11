@@ -583,7 +583,7 @@ corporateWebsiteHeader.prototype = {
     link.appendChild(image);
     openmarketnav.appendChild(link);
 
-    webflowNavItemsList.body.appendChild(openmarketnav);
+    webflowNavItemsList.appendChild(openmarketnav);
   },
   _removeCogwheelIcon: function () {
     const existingIcon = document.querySelector(

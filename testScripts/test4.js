@@ -35,7 +35,7 @@ corporateWebsiteHeader.prototype = {
       nodeList.classList.remove("custom-hidden")
     );
     this._removeLoginDemoNavItem(context);
-    this._renderCogwheelIcon(context);
+    this._renderMobileCogwheelIcon(context);
 
     // hides corporate navItem ex: login / Book a Demo
     corporateNav.forEach((nodeList) => nodeList.classList.add("custom-hidden"));
@@ -58,7 +58,7 @@ corporateWebsiteHeader.prototype = {
     corporateNav.forEach((nodeList) =>
       nodeList.classList.remove("custom-hidden")
     );
-    this._removeCogwheelIcon(context);
+    this._removeMobileCogwheelIcon(context);
     this._renderLoginDemoNavItem(context);
 
     // set the signup and login on window path outreach
@@ -132,11 +132,18 @@ corporateWebsiteHeader.prototype = {
     }
 
     function handleMediaQuery() {
-      const newWidth = window.innerWidth;
+      const menuDropList3 = document.getElementById("w-dropdown-list-a");
 
-      if (newWidth <= 991) {
+      const windowWidth = window.innerWidth;
+
+      if (windowWidth <= 991) {
+        if (menuDropList3)
+          menuDropList3.classList.add("w--nav-dropdown-list-open");
+
         createCogWheelIcon();
-      } else if (newWidth >= 991) {
+      } else if (windowWidth >= 991) {
+        if (menuDropList3)
+          menuDropList3.classList.remove("w--nav-dropdown-list-open");
         removeCogWheelIcon();
       }
     }
@@ -300,7 +307,7 @@ corporateWebsiteHeader.prototype = {
     const navLink = document.createElement("div");
     navLink.className = "nav-link w-dropdown-toggle";
     navLink.id = "w-dropdown-toggle-0";
-    navLink.setAttribute("aria-controls", "w-dropdown-list-0");
+    navLink.setAttribute("aria-controls", "w-dropdown-list-a");
     navLink.setAttribute("aria-haspopup", "menu");
     navLink.setAttribute("aria-expanded", "false");
     navLink.setAttribute("role", "button");
@@ -319,7 +326,7 @@ corporateWebsiteHeader.prototype = {
 
     const menuDropdownList3 = document.createElement("nav");
     menuDropdownList3.className = "menu-dropdown-list3 w-dropdown-list";
-    menuDropdownList3.id = "w-dropdown-list-0";
+    menuDropdownList3.id = "w-dropdown-list-a";
     menuDropdownList3.setAttribute("aria-labelledby", "w-dropdown-toggle-0");
 
     const layoutGrid = document.createElement("div");
@@ -565,6 +572,13 @@ corporateWebsiteHeader.prototype = {
   _renderCogwheelIcon: function () {
     const webflowNavItemsList = document.querySelector(".nav-menu.w-nav-menu");
 
+    const existingIcon = document.querySelector(
+      ".openmarketnav.openmarket-cogwheel"
+    );
+
+    if (existingIcon) {
+      existingIcon.remove();
+    }
     const openmarketnav = document.createElement("div");
     openmarketnav.id = "openmarketnav";
     openmarketnav.className = "openmarketnav openmarket-cogwheel";

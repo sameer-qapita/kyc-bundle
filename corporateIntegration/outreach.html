@@ -1,0 +1,79 @@
+<!-- IMPORTANT: Place the script tag inside the webflow page where the integration UI needs to be shown -->
+
+<script>
+  window.outreachConfigPath = "/outreach/config.json";
+  window.outreachBasePath = "/outreach/";
+  const loadScript = (FILE_URL, async = true, type = "text/javascript") => {
+    return new Promise((resolve, reject) => {
+      try {
+        const scriptEle = document.createElement("script");
+        scriptEle.type = type;
+        scriptEle.defer = true;
+        scriptEle.src = FILE_URL;
+
+        scriptEle.addEventListener("load", (ev) => {
+          resolve({ status: true });
+        });
+
+        scriptEle.addEventListener("error", (ev) => {
+          reject({
+            status: false,
+            message: "Failed to load the script " + (FILE_URL || "none.."),
+          });
+        });
+
+        document.body.appendChild(scriptEle);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
+  const loadStylesheet = function (url) {
+    // Create a new link element
+    const link = document.createElement("link");
+
+    // Set the properties for the stylesheet
+    link.rel = "stylesheet";
+    link.href = url;
+
+    // Append the link element to the head section of the document
+    document.head.appendChild(link);
+  };
+
+  function init() {
+    var openMarketplaceBasePath = "/outreach/";
+    fetch(
+      openMarketplaceBasePath +
+        "corporate-website-manifest.json?q=" +
+        Date.now(),
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        for (const cssLink of response.css || []) {
+          let finalCssLink = cssLink.startsWith("/")
+            ? cssLink.slice(1)
+            : cssLink;
+          loadStylesheet(openMarketplaceBasePath + finalCssLink);
+        }
+        for (const jsLink of response.js || []) {
+          let finalLink = jsLink.startsWith("/") ? jsLink.slice(1) : jsLink;
+
+          loadScript(openMarketplaceBasePath + finalLink)
+            .then((data) => {
+              console.log("Script loaded successfully", data);
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        }
+      });
+  }
+  init();
+</script>

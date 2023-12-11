@@ -1,18 +1,4 @@
-/**
- * **Version**:
- * 1.0.1
- *
- * **Last Update:**
- * 05-12-2023
- */
 function corporateWebsiteHeader() {}
-
-const baseUrl = window.location.origin;
-console.log({
-  baseUrl,
-});
-console.log("inspect");
-
 const menuItems = [
   {
     title: "For Issuers",
@@ -26,7 +12,7 @@ const menuItems = [
   {
     title: "For Investors",
     subtitle: "Institutions | Family Offices",
-    link: `${baseUrl}/outreach/login`,
+    link: "https://open-marketplace.qapitacorp.com/",
     iconSrc:
       "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b040783605e0e21b40_For-Investors.svg",
     iconAlt: "For Investors",
@@ -144,12 +130,12 @@ corporateWebsiteHeader.prototype = {
       if (investorLogged) investorLogged.classList.add("custom-hidden");
     }
   },
-
   _renderCogWheelMenu: function (context) {
     function createCogWheelIcon() {
       const rightViewMB = document.querySelector(
         ".right-view-mb .openmarketnav.openmarket-cogwheel"
       );
+
       if (!rightViewMB) {
         // Creates CogWheel Icon
         const cogWheelIconElement = document.createElement("div");
@@ -183,24 +169,19 @@ corporateWebsiteHeader.prototype = {
 
       const windowWidth = window.innerWidth;
 
-      const isSmallScreen = windowWidth <= 991;
+      if (windowWidth <= 991) {
+        manageDropList.classList.add("w--nav-dropdown-list-open");
+        manageNavDiv.classList.add("w--nav-dropdown-toggle-open");
+        manageZ1Div.classList.add("w--nav-dropdown-open");
 
-      if (manageDropList)
-        isSmallScreen
-          ? manageDropList.classList.add("w--nav-dropdown-list-open")
-          : manageDropList.classList.remove("w--nav-dropdown-list-open");
+        createCogWheelIcon();
+      } else if (windowWidth >= 991) {
+        manageDropList.classList.remove("w--nav-dropdown-list-open");
+        manageNavDiv.classList.remove("w--nav-dropdown-toggle-open");
+        manageZ1Div.classList.remove("w--nav-dropdown-open");
 
-      if (manageNavDiv)
-        isSmallScreen
-          ? manageNavDiv.classList.add("w--nav-dropdown-toggle-open")
-          : manageNavDiv.classList.remove("w--nav-dropdown-toggle-open");
-
-      if (manageZ1Div)
-        isSmallScreen
-          ? manageZ1Div.classList.add("w--nav-dropdown-open")
-          : manageZ1Div.classList.remove("w--nav-dropdown-open");
-
-      isSmallScreen ? createCogWheelIcon() : removeCogWheelIcon();
+        removeCogWheelIcon();
+      }
     }
 
     handleMediaQuery();
@@ -315,7 +296,6 @@ corporateWebsiteHeader.prototype = {
     }
     /* --- mobile responsive event listener --- */
   },
-
   _hideNavItemsOnStart: function (context) {
     var openMarketNav = document.querySelectorAll(
       `#${context.outreachNavItemsSelector}`
@@ -325,7 +305,6 @@ corporateWebsiteHeader.prototype = {
       nodeList.classList.add("custom-hidden");
     });
   },
-
   _renderManage: function (context) {
     const menuItemsData = [
       {
@@ -593,14 +572,12 @@ corporateWebsiteHeader.prototype = {
       navLinkLogin.setAttribute("aria-expanded", isExpanded.toString());
     });
   },
-
   _removeLoginDemoNavItem: function () {
     const corporateDiv = document.getElementById("corporatenav");
     if (corporateDiv) {
       corporateDiv.remove();
     }
   },
-
   _renderMobileCogwheelIcon: function () {
     const webflowNavItemsList = document.querySelector(".nav-menu.w-nav-menu");
 
@@ -631,7 +608,6 @@ corporateWebsiteHeader.prototype = {
 
     webflowNavItemsList.appendChild(openmarketnav);
   },
-
   _removeMobileCogwheelIcon: function () {
     const existingIcon = document.querySelector(
       ".openmarketnav.openmarket-cogwheel"
@@ -641,7 +617,6 @@ corporateWebsiteHeader.prototype = {
       existingIcon.remove();
     }
   },
-
   _renderMobileLoginNavItem: function (context, menuItems) {
     const mobileRightView = document.querySelector(".right-view-mb");
     const existingLogin = document.querySelector(
@@ -727,7 +702,6 @@ corporateWebsiteHeader.prototype = {
       mobileRightView.appendChild(loginDropdownDiv);
     }
   },
-
   _removeMobileLoginNavItem: function () {
     const existingLogin = document.querySelector(
       "login-dropdown.at-hide.hide-login.corporatenav"

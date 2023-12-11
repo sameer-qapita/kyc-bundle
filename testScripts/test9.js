@@ -1,4 +1,33 @@
 function corporateWebsiteHeader() {}
+const menuItems = [
+  {
+    title: "For Issuers",
+    subtitle: "Private Companies | Founders",
+    link: "https://liquidity.qapitacorp.com/",
+    iconSrc:
+      "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/63415a26407836e8ece22209_fundraising.svg",
+    iconAlt: "Fundraising",
+    iconClass: "menu-icon menu-cap",
+  },
+  {
+    title: "For Investors",
+    subtitle: "Institutions | Family Offices",
+    link: "https://open-marketplace.qapitacorp.com/",
+    iconSrc:
+      "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b040783605e0e21b40_For-Investors.svg",
+    iconAlt: "For Investors",
+    iconClass: "menu-icon",
+  },
+  {
+    title: "For Stakeholders",
+    subtitle: "Shareholders | Employees",
+    link: "https://liquidity.qapitacorp.com/",
+    iconSrc:
+      "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b9b9d4cee75c9faabd_For%20Stakeholders.svg",
+    iconAlt: "For Stakeholders",
+    iconClass: "menu-icon",
+  },
+];
 
 corporateWebsiteHeader.prototype = {
   isUserLoggedIn: function (context) {
@@ -35,7 +64,7 @@ corporateWebsiteHeader.prototype = {
       nodeList.classList.remove("custom-hidden")
     );
     this._removeLoginDemoNavItem(context);
-    this._renderCogwheelIcon(context);
+    this._renderMobileCogwheelIcon(context);
 
     // hides corporate navItem ex: login / Book a Demo
     corporateNav.forEach((nodeList) => nodeList.classList.add("custom-hidden"));
@@ -58,8 +87,8 @@ corporateWebsiteHeader.prototype = {
     corporateNav.forEach((nodeList) =>
       nodeList.classList.remove("custom-hidden")
     );
-    this._removeCogwheelIcon(context);
-    this._renderLoginDemoNavItem(context);
+    this._removeMobileCogwheelIcon(context);
+    this._renderLoginDemoNavItem(context, menuItems);
 
     // set the signup and login on window path outreach
     if (window.location.pathname.includes("/outreach")) {
@@ -132,19 +161,29 @@ corporateWebsiteHeader.prototype = {
     }
 
     function handleMediaQuery() {
-      const menuDropList3 = document.getElementById("w-dropdown-list-a");
-      const navDiv = document.getElementById("w-dropdown-list-mobile-a");
+      const manageDropList = document.getElementById("w-dropdown-list-a");
+      const manageNavDiv = document.getElementById("w-dropdown-list-navdiv-a");
+      const manageZ1Div = document.getElementById("w-dropdown-list-z1-a");
 
       const windowWidth = window.innerWidth;
 
       if (windowWidth <= 991) {
-        menuDropList3.classList.add("w--nav-dropdown-list-open");
-        navDiv.classList.add("w--nav-dropdown-toggle-open");
+        manageDropList.classList.add("w--nav-dropdown-list-open");
+        manageNavDiv.classList.add("w--nav-dropdown-toggle-open");
+        manageZ1Div.classList.add("w--nav-dropdown-open");
+
+        corporateWebsiteHeader.prototype._renderMobileLoginNavItem(
+          context,
+          menuItems
+        );
 
         createCogWheelIcon();
       } else if (windowWidth >= 991) {
-        menuDropList3.classList.remove("w--nav-dropdown-list-open");
-        navDiv.classList.add("w--nav-dropdown-toggle-open");
+        manageDropList.classList.remove("w--nav-dropdown-list-open");
+        manageNavDiv.classList.remove("w--nav-dropdown-toggle-open");
+        manageZ1Div.classList.remove("w--nav-dropdown-open");
+
+        corporateWebsiteHeader.prototype._removeMobileLoginNavItem(context);
 
         removeCogWheelIcon();
       }
@@ -271,7 +310,7 @@ corporateWebsiteHeader.prototype = {
       nodeList.classList.add("custom-hidden");
     });
   },
-  _renderManage: function () {
+  _renderManage: function (context) {
     const menuItemsData = [
       {
         title: "Blocks",
@@ -304,12 +343,13 @@ corporateWebsiteHeader.prototype = {
     const wDropdown = document.createElement("div");
     wDropdown.setAttribute("data-hover", "false");
     wDropdown.setAttribute("data-delay", "0");
+    wDropdown.id = "w-dropdown-list-z1-a";
     wDropdown.className = "z-1 w-dropdown";
 
     const navLink = document.createElement("div");
     navLink.className = "nav-link w-dropdown-toggle";
-    navLink.id = "w-dropdown-toggle-0";
-    navLink.setAttribute("aria-controls", "w-dropdown-list-mobile-a");
+    navLink.id = "w-dropdown-list-navdiv-a";
+    navLink.setAttribute("aria-controls", "w-dropdown-list-navdiv-a");
     navLink.setAttribute("aria-haspopup", "menu");
     navLink.setAttribute("aria-expanded", "false");
     navLink.setAttribute("role", "button");
@@ -405,6 +445,7 @@ corporateWebsiteHeader.prototype = {
     const webflowNavItemsList = document.querySelector(".nav-menu.w-nav-menu");
     webflowNavItemsList.prepend(openmarketnav);
   },
+
   _renderListings: function () {
     const existingElements = document.querySelector(
       ".openmarketnav.investorlogged"
@@ -427,7 +468,8 @@ corporateWebsiteHeader.prototype = {
     const webflowNavItemsList = document.querySelector(".nav-menu.w-nav-menu");
     webflowNavItemsList.prepend(openmarketnav);
   },
-  _renderLoginDemoNavItem: function (context) {
+
+  _renderLoginDemoNavItem: function (context, menuItems) {
     const corporateDiv = document.getElementById("corporatenav");
     if (corporateDiv) {
       corporateDiv.remove();
@@ -480,36 +522,6 @@ corporateWebsiteHeader.prototype = {
     layoutGridDiv.classList.add("w-layout-grid", "menu-dropdown-grid3");
 
     // create a loop to render menu items
-
-    const menuItems = [
-      {
-        title: "For Issuers",
-        subtitle: "Private Companies | Founders",
-        link: "https://liquidity.qapitacorp.com/",
-        iconSrc:
-          "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/63415a26407836e8ece22209_fundraising.svg",
-        iconAlt: "Fundraising",
-        iconClass: "menu-icon menu-cap",
-      },
-      {
-        title: "For Investors",
-        subtitle: "Institutions | Family Offices",
-        link: "https://open-marketplace.qapitacorp.com/",
-        iconSrc:
-          "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b040783605e0e21b40_For-Investors.svg",
-        iconAlt: "For Investors",
-        iconClass: "menu-icon",
-      },
-      {
-        title: "For Stakeholders",
-        subtitle: "Shareholders | Employees",
-        link: "https://liquidity.qapitacorp.com/",
-        iconSrc:
-          "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b9b9d4cee75c9faabd_For%20Stakeholders.svg",
-        iconAlt: "For Stakeholders",
-        iconClass: "menu-icon",
-      },
-    ];
 
     // Loop through the menuItems array and create menu items
     menuItems.forEach((item) => {
@@ -586,7 +598,7 @@ corporateWebsiteHeader.prototype = {
     openmarketnav.className = "openmarketnav openmarket-cogwheel";
 
     const link = document.createElement("a");
-    link.href = "#"; // Change the href value as needed
+    link.href = "#";
     link.className = "nav-link cogwheel-mb w-inline-block";
 
     const image = document.createElement("img");
@@ -608,6 +620,91 @@ corporateWebsiteHeader.prototype = {
 
     if (existingIcon) {
       existingIcon.remove();
+    }
+  },
+  _renderMobileLoginNavItem: function (context, menuItems) {
+    const mobileRightView = document.createElement("div");
+    mobileRightView.classList.add("right-view-mb");
+
+    const loginDropdownDiv = document.createElement("div");
+    loginDropdownDiv.classList.add(
+      "login-dropdown",
+      "at-hide",
+      "hide-login",
+      "corporatenav"
+    );
+
+    const wDropdownDiv = document.createElement("div");
+    wDropdownDiv.classList.add("z-1", "w-dropdown");
+
+    const navLinkLoginDiv = document.createElement("div");
+    navLinkLoginDiv.classList.add("nav-link-login", "w-dropdown-toggle");
+    navLinkLoginDiv.id = "w-dropdown-toggle-4";
+    navLinkLoginDiv.setAttribute("aria-controls", "w-dropdown-list-4");
+    navLinkLoginDiv.setAttribute("aria-haspopup", "menu");
+    navLinkLoginDiv.setAttribute("aria-expanded", "false");
+    navLinkLoginDiv.setAttribute("role", "button");
+    navLinkLoginDiv.setAttribute("tabindex", "0");
+
+    // Create the login arrow icon
+    const iconDiv = document.createElement("div");
+    iconDiv.classList.add("icon-2", "w-icon-dropdown-toggle");
+    iconDiv.setAttribute("aria-hidden", "true");
+
+    // Create the login button div
+    const lofinNavDiv = document.createElement("div");
+    lofinNavDiv.classList.add("lofin-nav");
+    lofinNavDiv.textContent = "Login";
+
+    navLinkLoginDiv.appendChild(iconDiv);
+    navLinkLoginDiv.appendChild(lofinNavDiv);
+    wDropdownDiv.appendChild(navLinkLoginDiv);
+
+    // corporatenavDiv.appendChild(loginDropdownDiv);
+
+    const menuDropdownList3Nav = document.createElement("nav");
+    menuDropdownList3Nav.classList.add(
+      "menu-dropdown-list3",
+      "w-dropdown-list"
+    );
+    menuDropdownList3Nav.id = "w-dropdown-list-4";
+    menuDropdownList3Nav.setAttribute("aria-labelledby", "w-dropdown-toggle-4");
+
+    const layoutGridDiv = document.createElement("div");
+    layoutGridDiv.classList.add("w-layout-grid", "menu-dropdown-grid3");
+
+    // create a loop to render menu items
+
+    // Loop through the menuItems array and create menu items
+    menuItems.forEach((item) => {
+      const menuItem = document.createElement("div");
+      menuItem.classList.add("menu-dropdown-grid-item");
+      menuItem.innerHTML = `
+    <a href="${item.link}" class="menu-link w-inline-block" tabindex="0">
+        <div class="menu-icon-block">
+            <img src="${item.iconSrc}" loading="lazy" alt="${item.iconAlt}" class="${item.iconClass}">
+        </div>
+        <div class="menu-link-item">
+            <div class="menu-link-title">${item.title}</div>
+            <div class="menu-subtitle">${item.subtitle}</div>
+        </div>
+    </a>
+  `;
+      layoutGridDiv.appendChild(menuItem);
+    });
+
+    menuDropdownList3Nav.appendChild(layoutGridDiv);
+    wDropdownDiv.appendChild(menuDropdownList3Nav);
+
+    loginDropdownDiv.appendChild(wDropdownDiv);
+    mobileRightView.appendChild(loginDropdownDiv);
+  },
+  _removeMobileLoginNavItem: function () {
+    const existingLogin = document.querySelector(
+      "login-dropdown.at-hide.hide-login.corporatenav"
+    );
+    if (existingLogin) {
+      existingLogin.remove();
     }
   },
 };
