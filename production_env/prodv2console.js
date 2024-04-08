@@ -1,6 +1,63 @@
-function corporateWebsiteHeader() {}
+  
+   /**
+ * **Version**:
+ * 1.0.2
+ * 
+ * **Last Update:**
+ * 08-04-2024
+ */
+  
+  // Global data
+  const defaultUserInfo = {
+     name: {
+       firstName: "",
+       middleName: "",
+       lastName: "",
+     },
+     role: "",
+     isLoggedIn: false,
+   };
+   
+   let context = {
+     // Names should match the class name defined in webflow
+     userInfo: defaultUserInfo,
+     corporateNavItemsSelector: "corporatenav",
+     outreachNavItemsSelector: "openmarketnav",
+     signupOrDemoSelector: "signup-demo",
+     cogWheelSelector: "openmarketnav.openmarket-cogwheel",
+     DMLoggedSelector: "dmlogged",
+     investorLoggedSelector: "investorlogged",
+     outreachSubMenuDropdownSelector: "omp-submenu-dropdown",
+     userInfoChangedEventListner: "userDataChanged",
+     localStorageUserInfo: "userData",
+   };
+     
+     function updateUserInfoInContext(userInfo) {
+     context.userInfo = userInfo;
+   
+     corporateWebsiteHeader.prototype.isUserLoggedIn(context);
+     corporateWebsiteHeader.prototype._refreshHeader(context);
+   }
+   
+   // On DOM load
+   document.addEventListener("DOMContentLoaded", function () {
+     const userInfo = JSON.parse(
+       localStorage.getItem(context.localStorageUserInfo)
+     );
+     updateUserInfoInContext(userInfo);
+   });
+   
+   // Event Listener whenever the userInfo changes
+   document.addEventListener(context.userInfoChangedEventListner, ({ detail }) => {
+     if (detail && detail.name && detail.role && detail.isLoggedIn !== undefined) {
+       localStorage.setItem(context.localStorageUserInfo, JSON.stringify(detail));
+       updateUserInfoInContext(detail);
+     }
+   });
 
-const corporateWebsiteBaseURL = window.location.origin;
+function corporateWebsiteHeader() { }
+
+const corporateWebsiteBaseUrl = window.location.origin;
 
 const menuItems = [
   {
@@ -15,7 +72,7 @@ const menuItems = [
   {
     title: "For Investors",
     subtitle: "Institutions | Family Offices",
-    link: `${corporateWebsiteBaseURL}/outreach/login`,
+    link: `${corporateWebsiteBaseUrl}/outreach/login`,
     iconSrc:
       "https://assets-global.website-files.com/633e5454c8dec0fa090556c5/634159b040783605e0e21b40_For-Investors.svg",
     iconAlt: "For Investors",
